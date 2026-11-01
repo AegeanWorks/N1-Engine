@@ -58,7 +58,10 @@ class DataManager:
                         if pd.isna(intervention_id):
                             intervention_id = None
                         elif intervention_id is not None:
-                            intervention_id = int(intervention_id)
+                            try:
+                                intervention_id = int(intervention_id)
+                            except (TypeError, ValueError):
+                                intervention_id = None
                         entries.append(MetricEntry(
                             date=row['date'],
                             metric_name=row['metric_name'],
@@ -127,13 +130,19 @@ class DataManager:
                         if pd.isna(severity):
                             severity = None
                         elif severity is not None:
-                             severity = int(severity)
+                            try:
+                                severity = int(severity)
+                            except (TypeError, ValueError):
+                                severity = None
 
                         intervention_id = row.get('intervention_id')
                         if pd.isna(intervention_id):
                             intervention_id = None
                         elif intervention_id is not None:
-                            intervention_id = int(intervention_id)
+                            try:
+                                intervention_id = int(intervention_id)
+                            except (TypeError, ValueError):
+                                intervention_id = None
 
                         entries.append(EventEntry(
                             timestamp=row['timestamp'],
