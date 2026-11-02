@@ -10,7 +10,7 @@
 - **Total Classes**: `22`
 - **Total Top-Level Functions**: `23`
 - **Total Class Methods**: `71`
-- **Total Source Lines**: `3048`
+- **Total Source Lines**: `3057`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `199` lines (`9289` bytes)
+**Size**: `208` lines (`9737` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*

@@ -1,42 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "reforge:run-1",
+    "task_id": "audit:wave0-30",
     "last_phase": "phase 4",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1793293074.0344124,
-    "owner": "opencode:reforge",
-    "started_by": "opencode:reforge",
-    "continuations": [
-      {
-        "agent": "copilot:n1-engine",
-        "from": "opencode:reforge",
-        "at": 1793453421.2522407
-      }
-    ],
-    "completed_at": 1793453421.2522418
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1793660662.5830839,
+    "owner": "kilo:audit",
+    "started_by": "kilo:audit",
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "integrate-aikit",
-      "phase": "phase 5",
-      "phase_num": 5,
-      "description": "[delivery] Strict check caught README tree omissions (main/__init__.py, main/config.py) now that the project is a git repo; fixed, 4/4 gates pass, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1792621324.1677012,
-      "timestamp_str": "2026-10-22 01:22:04"
-    },
-    {
-      "task_id": "integrate-aikit",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'integrate-aikit' completed successfully.",
-      "status": "completed",
-      "timestamp": 1792691252.536124,
-      "timestamp_str": "2026-10-22 20:47:32"
-    },
     {
       "task_id": "reforge:run-1",
       "phase": "reforge stage 15",
@@ -234,6 +208,35 @@
       "timestamp": 1793453622.7950861,
       "timestamp_str": "2026-10-31 16:33:42",
       "agent": "github"
+    },
+    {
+      "task_id": "audit:wave0-30",
+      "phase": "phase 2",
+      "phase_num": 2,
+      "description": "[1/2] Audit N1-Engine Wave0 clean plus Waves 10,20,30 chunked HEAD~10..HEAD survey-verify-analyze",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1793660615.0472002,
+      "timestamp_str": "2026-11-03 02:03:35",
+      "agent": "kilo:audit",
+      "impact_assessment": {
+        "why": "verify clean tree and recent 30-commit risk windows without pushing",
+        "benefits": "gates green and import tolerance verified",
+        "risks": "contract: none; dependency: none; concurrency: none; state: map regen only",
+        "mitigation": "read-only survey plus generated map refresh, local commit no push"
+      },
+      "plan_digest": "549e9de437b78254466716a695c65fff47f86ce0fb150767c1b309d6cd0c4002"
+    },
+    {
+      "task_id": "audit:wave0-30",
+      "phase": "phase 4",
+      "phase_num": 4,
+      "description": "checklists: passed; Wave0 clean verified, Waves 10/20/30 surveyed, 16/16 pytest, import tolerance verified, map refreshed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1793660662.5830839,
+      "timestamp_str": "2026-11-03 02:04:22",
+      "agent": "kilo:audit"
     }
   ]
 }

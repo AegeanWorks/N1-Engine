@@ -34,3 +34,5 @@ settings.json
 # AIKit transient state
 *.py[cod]
 node_modules/
+# AIKit transient state
+.aikit/*.log
