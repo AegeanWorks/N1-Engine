@@ -41,6 +41,26 @@
       }
     }
   },
-  "screenshots": [],
+  "screenshots": [
+    {
+      "path": "assets/screenshots/2026-11-03-main.png",
+      "alt": "N1-Engine workspace at 2026-11-03",
+      "caption": "Workspace from python run_gui.py against a blank database (N1_DATABASE_URL override): empty intervention and metric tables, all tabs. The live owner database is never shown.",
+      "commit": "6f6a75ef0ec51135fa76655131e95460544845a6",
+      "taken_at": "2026-11-03",
+      "viewport": "1016x839",
+      "width": 1016,
+      "height": 839,
+      "status": "approved",
+      "review": {
+        "status": "approved",
+        "reviewer": "agent:kilo",
+        "method": "vision",
+        "notes": "Real PrintWindow capture of the live Qt app on a blank DB: tabs, empty tables, all action buttons legible. A first attempt framed the owner live data and was deleted before wiring.",
+        "score": 90,
+        "reviewed_at": "2026-11-03"
+      }
+    }
+  ],
   "model": "community/scriptsnsenses-sys/flux-2-dev-free"
 }

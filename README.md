@@ -256,3 +256,11 @@ The N1-Engine is a tool for informational and educational purposes only. It is *
 ## 📜 License
 
 Free for personal use under the Aegean License 1.1 (AL-1.1); see [LICENSE](LICENSE). Any commercial use needs the Aegean Commercial License 1.0 (ACL-1.0); see [COMMERCIAL.md](COMMERCIAL.md).
+
+<!-- aegean:screenshots:start -->
+## Screenshots
+
+<a href="https://github.com/AegeanWorks/N1-Engine/commit/6f6a75e"><img src="assets/screenshots/2026-11-03-main.png" alt="N1-Engine workspace at 2026-11-03"></a>
+
+*commit `6f6a75e` · 2026-11-03 · window 1016x839 · blank-database workspace via N1_DATABASE_URL (ADR-004)*
+<!-- aegean:screenshots:end -->

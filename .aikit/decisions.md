@@ -33,3 +33,10 @@ contract, a dependency, a data format or the architecture; IDs are consecutive a
 - **Context**: the workspace and settings release added `interventions.projected_end_date` and `metrics/events.intervention_id`; `create_all` does not alter an existing `main.db`, so upgrades would fail or hide legacy rows.
 - **Decision**: `main.core.database.ensure_schema()` runs `create_all`, adds missing SQLite columns/indexes idempotently, and backfills rows with a `NULL` `intervention_id` into a visible `Legacy (unassigned)` intervention. CSV import/export also preserves `intervention_id` and `projected_end_date`.
 - **Consequences**: existing databases open without manual deletion and legacy rows stay reachable; the placeholder intervention can be renamed or merged later; 16/16 tests pass.
+
+### ADR-004: Blank-database keeper; live owner data never framed
+- **Date**: 2026-11-03
+- **Status**: Accepted
+- **Context**: The app opens the owner's live `main.db`; a first capture framed a real health row and was deleted before wiring. No registered screenshots existed.
+- **Decision**: Register `2026-11-03-main.png` (`python run_gui.py` with `N1_DATABASE_URL` pointed at a TEMP blank database, PrintWindow on `N1-Engine`, 1016x839, commit `6f6a75e`) in `.aikit/media.json` and the README `aegean:screenshots` block. The empty workspace is the honest fresh-user state.
+- **Consequences**: README proves the current app without exposing personal data. Reproduce with the env override plus PrintWindow helper above.
