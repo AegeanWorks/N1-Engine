@@ -1,50 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "audit:wave0-30",
-    "last_phase": "phase 4",
+    "task_id": "audit:waves0-30-first30",
+    "last_phase": "verification",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1793660662.5830839,
+    "updated_at": 1793722784.365942,
     "owner": "kilo:audit",
     "started_by": "kilo:audit",
     "continuations": [],
-    "completed_at": 1793660703.9423249
+    "completed_at": 1793722787.7781396
   },
   "checkpoints": [
-    {
-      "task_id": "reforge:run-1",
-      "phase": "reforge stage 15",
-      "phase_num": 3,
-      "description": "Reforge stage 15: run resumed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1793292816.9099374,
-      "timestamp_str": "2026-10-29 19:53:36",
-      "agent": "opencode"
-    },
-    {
-      "task_id": "reforge:run-1",
-      "phase": "reforge stage 16",
-      "phase_num": 3,
-      "description": "Reforge stage 16: window 44, 1 commit(s), 0 file(s) reviewed (unreviewed), 0 finding(s), 0 repaired",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1793292854.912214,
-      "timestamp_str": "2026-10-29 19:54:14",
-      "agent": "opencode"
-    },
-    {
-      "task_id": "reforge:run-1",
-      "phase": "reforge stage 16",
-      "phase_num": 3,
-      "description": "Reforge stage 16: run stopped at stage 16; resume it with `reforge resume`",
-      "files_affected": [],
-      "status": "suspended",
-      "timestamp": 1793292866.8154414,
-      "timestamp_str": "2026-10-29 19:54:26",
-      "agent": "opencode"
-    },
     {
       "task_id": "reforge:run-1",
       "phase": "phase 4",
@@ -236,6 +203,45 @@
       "status": "completed",
       "timestamp": 1793660703.942328,
       "timestamp_str": "2026-11-03 02:05:03",
+      "agent": "kilo:audit"
+    },
+    {
+      "task_id": "audit:waves0-30-first30",
+      "phase": "planning",
+      "phase_num": 2,
+      "description": "[1/2] Audit N1-Engine oldest-first waves 0,10,20,30 (first 31 commits 0bd614e..7625fcb) survey-verify-analyze",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1793722639.599929,
+      "timestamp_str": "2026-11-03 19:17:19",
+      "agent": "kilo:audit",
+      "impact_assessment": {
+        "why": "verify oldest-30 risk windows in order and fix residual import-value fragility",
+        "benefits": "gates green and single-cell CSV fault no longer wipes whole import",
+        "risks": "contract: CSV import message shape; dependency: none; concurrency: none; state: map regen only",
+        "mitigation": "read-only survey plus failing-first pytest for value coercion, local commit no push"
+      },
+      "plan_digest": "c92bc741c9845cf4c9d5db73745ac9d14d72b20c66c165831fcce87e72603e42"
+    },
+    {
+      "task_id": "audit:waves0-30-first30",
+      "phase": "verification",
+      "phase_num": 4,
+      "description": "checklists: passed; Wave0 clean verified, Waves 10/20/30 surveyed, bad-value import tolerance fixed, 17/17 pytest, map refreshed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1793722784.365942,
+      "timestamp_str": "2026-11-03 19:19:44",
+      "agent": "kilo:audit"
+    },
+    {
+      "task_id": "audit:waves0-30-first30",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'audit:waves0-30-first30' completed successfully.",
+      "status": "completed",
+      "timestamp": 1793722787.7781417,
+      "timestamp_str": "2026-11-03 19:19:47",
       "agent": "kilo:audit"
     }
   ]

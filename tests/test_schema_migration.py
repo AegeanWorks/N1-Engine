@@ -115,3 +115,22 @@ def test_save_settings_reports_failure(tmp_path):
 
     unwritable = SettingsManager(settings_file=str(tmp_path))
     assert unwritable.save_settings() is False
+
+
+def test_csv_import_coerces_bad_numeric_value_cells(tmp_path):
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+
+    bad_csv = tmp_path / "bad_metrics.csv"
+    bad_csv.write_text(
+        "date,metric_name,value\n2026-01-02,Sleep,bad-number\n2026-01-03,Sleep,8.0\n",
+        encoding="utf-8",
+    )
+
+    manager = DataManager(session)
+    result = manager.import_from_csv(str(bad_csv), "metrics")
+    assert result["success"] is True
+    assert session.query(MetricEntry).count() == 1
+    assert session.query(MetricEntry).one().value == 8.0
+    session.close()

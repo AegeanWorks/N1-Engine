@@ -40,3 +40,10 @@ contract, a dependency, a data format or the architecture; IDs are consecutive a
 - **Context**: The app opens the owner's live `main.db`; a first capture framed a real health row and was deleted before wiring. No registered screenshots existed.
 - **Decision**: Register `2026-11-03-main.png` (`python run_gui.py` with `N1_DATABASE_URL` pointed at a TEMP blank database, PrintWindow on `N1-Engine`, 1016x839, commit `6f6a75e`) in `.aikit/media.json` and the README `aegean:screenshots` block. The empty workspace is the honest fresh-user state.
 - **Consequences**: README proves the current app without exposing personal data. Reproduce with the env override plus PrintWindow helper above.
+
+### ADR-005: Coerce bad numeric CSV value cells instead of failing the import
+- **Date**: 2026-11-03
+- **Status**: Accepted
+- **Context**: `DataManager.import_from_csv(metrics)` passed `row['value']` straight to SQLAlchemy. One `bad-number` cell raised `ValueError: could not convert string to float` and aborted the whole file (0 rows). Wave audit (oldest-first 0,10,20,30; `38705f7` import path) reproduced: 2-row CSV with 1 bad cell returned `success False`. Prior `43605f9` had coerced only `intervention_id`/`severity`.
+- **Decision**: `pd.to_numeric(errors='coerce')` on `value`, drop NaN rows, import the valid rows; success message appends `(skipped N bad value row(s))`; all-bad returns `success False` with `No valid metric entries (skipped N ...)`.
+- **Consequences**: single-cell faults no longer wipe valid rows; contract adds the parenthesised skip note only when `N>0`; 17/17 pytest passes including `test_csv_import_coerces_bad_numeric_value_cells`.

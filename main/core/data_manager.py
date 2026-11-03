@@ -50,6 +50,14 @@ class DataManager:
                     # Use pandas to handle date parsing
                     df['date'] = pd.to_datetime(df['date']).dt.date
 
+                    # Coerce bad numeric cells to NaN so one bad cell does not
+                    # fail the whole import (extends intervention_id tolerance).
+                    df['value'] = pd.to_numeric(df['value'], errors='coerce')
+                    skipped_bad = int(df['value'].isna().sum())
+                    df = df.dropna(subset=['value'])
+                    if df.empty:
+                        return {"success": False, "message": f"No valid metric entries (skipped {skipped_bad} bad value row(s))."}
+
                     entries = []
                     # Convert to list of dicts for faster iteration
                     records = df.to_dict('records')
@@ -75,6 +83,8 @@ class DataManager:
                     # But usually transaction management is up to caller if they pass session.
                     # However, "import" implies a complete action. I will commit.
                     session.commit()
+                    if skipped_bad:
+                        return {"success": True, "message": f"Successfully imported {len(entries)} metric entries (skipped {skipped_bad} bad value row(s))."}
                     return {"success": True, "message": f"Successfully imported {len(entries)} metric entries."}
 
                 elif data_type == 'interventions':

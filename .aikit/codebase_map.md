@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `26`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `23`
+- **Total Top-Level Functions**: `24`
 - **Total Class Methods**: `71`
-- **Total Source Lines**: `3057`
+- **Total Source Lines**: `3086`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `208` lines (`9737` bytes)
+**Size**: `218` lines (`10451` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -292,12 +292,13 @@
 ---
 
 ### [`tests/test_schema_migration.py`](tests/test_schema_migration.py)
-**Size**: `117` lines (`4505` bytes)
+**Size**: `136` lines (`5148` bytes)
 
 **Functions:**
 - `def _old_database(path)`
 - `def test_ensure_schema_upgrades_an_old_sqlite_database(tmp_path)`
 - `def test_csv_import_preserves_intervention_links(tmp_path)`
 - `def test_save_settings_reports_failure(tmp_path)`
+- `def test_csv_import_coerces_bad_numeric_value_cells(tmp_path)`
 
 ---
