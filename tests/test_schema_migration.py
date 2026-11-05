@@ -134,3 +134,62 @@ def test_csv_import_coerces_bad_numeric_value_cells(tmp_path):
     assert session.query(MetricEntry).count() == 1
     assert session.query(MetricEntry).one().value == 8.0
     session.close()
+
+
+def test_csv_import_skips_bad_date_rows(tmp_path):
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+
+    bad_csv = tmp_path / "bad_dates.csv"
+    bad_csv.write_text(
+        "date,metric_name,value\nnot-a-date,Sleep,8.0\n2026-01-03,Sleep,7.5\n",
+        encoding="utf-8",
+    )
+
+    manager = DataManager(session)
+    result = manager.import_from_csv(str(bad_csv), "metrics")
+    assert result["success"] is True
+    assert "skipped 1" in result["message"]
+    assert session.query(MetricEntry).count() == 1
+    assert session.query(MetricEntry).one().value == 7.5
+    session.close()
+
+
+def test_csv_import_coerces_out_of_range_severity(tmp_path):
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+
+    events_csv = tmp_path / "events.csv"
+    events_csv.write_text(
+        "timestamp,event_name,severity\n2026-01-02 10:00:00,Stress,99\n2026-01-03 10:00:00,Calm,2\n",
+        encoding="utf-8",
+    )
+
+    manager = DataManager(session)
+    result = manager.import_from_csv(str(events_csv), "events")
+    assert result["success"] is True
+    assert session.query(EventEntry).count() == 2
+    rows = {r.event_name: r.severity for r in session.query(EventEntry).all()}
+    assert rows["Stress"] is None
+    assert rows["Calm"] == 2
+    session.close()
+
+
+def test_csv_import_rejects_all_bad_file(tmp_path):
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+
+    bad_csv = tmp_path / "all_bad.csv"
+    bad_csv.write_text(
+        "date,metric_name,value\nnot-a-date,Sleep,bad\n",
+        encoding="utf-8",
+    )
+
+    manager = DataManager(session)
+    result = manager.import_from_csv(str(bad_csv), "metrics")
+    assert result["success"] is False
+    assert session.query(MetricEntry).count() == 0
+    session.close()

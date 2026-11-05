@@ -77,7 +77,7 @@ This tool is built on the principles of "N=1 structured inference":
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Aegean-E/N1-Engine.git
+    git clone https://github.com/AegeanWorks/N1-Engine.git
     cd N1-Engine
     ```
 

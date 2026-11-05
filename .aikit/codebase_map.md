@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `26`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `24`
+- **Total Top-Level Functions**: `29`
 - **Total Class Methods**: `71`
-- **Total Source Lines**: `3086`
+- **Total Source Lines**: `3193`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `218` lines (`10451` bytes)
+**Size**: `266` lines (`12578` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -58,6 +58,10 @@
   - Method `._get_session()` - *Yields the existing session or creates a new one.*
   - Method `.import_from_csv(filepath, data_type)` - *Imports data from a CSV file.*
   - Method `.export_to_csv(filepath, data_type)` - *Exports data to a CSV file.*
+
+**Functions:**
+- `def _coerce_int_or_none(value, min_value, max_value)` - *Coerce CSV cells to int or None without raising.*
+- `def _clean_str_or_none(value)` - *Return stripped string or None for NaN/empty cells.*
 
 ---
 
@@ -292,7 +296,7 @@
 ---
 
 ### [`tests/test_schema_migration.py`](tests/test_schema_migration.py)
-**Size**: `136` lines (`5148` bytes)
+**Size**: `195` lines (`7295` bytes)
 
 **Functions:**
 - `def _old_database(path)`
@@ -300,5 +304,8 @@
 - `def test_csv_import_preserves_intervention_links(tmp_path)`
 - `def test_save_settings_reports_failure(tmp_path)`
 - `def test_csv_import_coerces_bad_numeric_value_cells(tmp_path)`
+- `def test_csv_import_skips_bad_date_rows(tmp_path)`
+- `def test_csv_import_coerces_out_of_range_severity(tmp_path)`
+- `def test_csv_import_rejects_all_bad_file(tmp_path)`
 
 ---

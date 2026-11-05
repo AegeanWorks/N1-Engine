@@ -31,8 +31,6 @@ settings.json
 .aikit/*.corrupt_*
 .aikit/reforge.reviews/
 .aikit/ui_task.json
-# AIKit transient state
+.aikit/*.log
 *.py[cod]
 node_modules/
-# AIKit transient state
-.aikit/*.log
