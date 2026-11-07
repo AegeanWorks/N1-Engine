@@ -6,11 +6,11 @@
 ---
 
 ## 📊 Codebase Metrics
-- **Total Python Modules**: `29`
+- **Total Python Modules**: `30`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `49`
+- **Total Top-Level Functions**: `51`
 - **Total Class Methods**: `72`
-- **Total Source Lines**: `3609`
+- **Total Source Lines**: `3657`
 
 ---
 
@@ -355,5 +355,16 @@
 - `def test_csv_import_skips_bad_date_rows(tmp_path)`
 - `def test_csv_import_coerces_out_of_range_severity(tmp_path)`
 - `def test_csv_import_rejects_all_bad_file(tmp_path)`
+
+---
+
+### [`tests/test_summarizer_escaping.py`](tests/test_summarizer_escaping.py)
+> *UI regression: summary user names must render as text, never as markup.*
+
+**Size**: `48` lines (`1323` bytes)
+
+**Functions:**
+- `def qapp()`
+- `def test_summary_escapes_user_entered_names(qapp)`
 
 ---
