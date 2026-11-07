@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `30`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `53`
+- **Total Top-Level Functions**: `54`
 - **Total Class Methods**: `72`
-- **Total Source Lines**: `3766`
+- **Total Source Lines**: `3790`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `346` lines (`16014` bytes)
+**Size**: `349` lines (`16133` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -276,7 +276,7 @@
 ### [`tests/test_audit_regressions.py`](tests/test_audit_regressions.py)
 > *Failing-first regressions found by the cumulative push-window audit.*
 
-**Size**: `249` lines (`7983` bytes)
+**Size**: `270` lines (`8630` bytes)
 
 **Functions:**
 - `def _session()`
@@ -291,6 +291,7 @@
 - `def test_event_import_clears_unknown_intervention_links(tmp_path)`
 - `def test_metric_definition_csv_roundtrip(tmp_path)`
 - `def test_metric_definition_import_skips_existing_names(tmp_path)`
+- `def test_metric_definition_import_skips_blank_names(tmp_path)`
 - `def test_export_orders_metrics_deterministically(tmp_path)`
 
 ---

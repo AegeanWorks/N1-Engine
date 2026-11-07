@@ -95,7 +95,7 @@ contract, a dependency, a data format or the architecture; IDs are consecutive a
 - **Status**: Accepted
 - **Context**: The README promises full data portability, but `DataManager` handled only metrics, interventions and events. `MetricDefinition` rows hold the logging vocabulary and the analysis dropdown; exporting and re-importing the other three tables into a fresh workspace lost that vocabulary, so a restored user could not log a new value for an existing metric. Reviewing windows 1->45 through 1->56 confirmed the gap.
 - **Decision**: Add `metric_definitions` to `import_from_csv` and `export_to_csv`. Import requires `name`, strips it, skips blank names, and skips names that already exist in the database or earlier in the same file (the column is unique); `description` and `unit` are cleaned like other optional strings. Export orders by name and id and drops the surrogate id. The message appends `skipped N duplicate row(s)` beside the existing skip and link notes.
-- **Consequences**: A full export/import round-trip now preserves definitions, descriptions and units; duplicate rows no longer abort the file. 36/36 tests pass, including two failing-first round-trip/duplicate tests in `tests/test_audit_regressions.py`.
+- **Consequences**: A full export/import round-trip now preserves definitions, descriptions and units; duplicate and blank-name rows no longer abort the file. 37/37 tests pass, including three failing-first round-trip/duplicate/blank-name tests in `tests/test_audit_regressions.py`.
 
 ### ADR-013: Data Management Exposes Metric-Definition Import and Export
 - **Date**: 2026-11-08

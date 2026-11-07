@@ -225,6 +225,27 @@ def test_metric_definition_import_skips_existing_names(tmp_path):
         session.close()
 
 
+def test_metric_definition_import_skips_blank_names(tmp_path):
+    session = _session()
+    try:
+        source = tmp_path / "definitions.csv"
+        source.write_text(
+            "name,description,unit\n,no name,score\nSleep,hours slept,hours\n",
+            encoding="utf-8",
+        )
+
+        result = DataManager(session).import_from_csv(
+            str(source), "metric_definitions"
+        )
+
+        assert result["success"] is True
+        assert "skipped 1 bad row" in result["message"]
+        rows = session.query(MetricDefinition).all()
+        assert [row.name for row in rows] == ["Sleep"]
+    finally:
+        session.close()
+
+
 def test_export_orders_metrics_deterministically(tmp_path):
     session = _session()
     try:

@@ -248,12 +248,15 @@ class DataManager:
                     if not all(col in df.columns for col in required_cols):
                         return {"success": False, "message": f"CSV must contain columns: {required_cols}"}
 
-                    df['name'] = df['name'].astype(str).str.strip()
-                    valid_mask = df['name'] != ''
+                    valid_mask = (
+                        df['name'].notna()
+                        & (df['name'].astype(str).str.strip() != '')
+                    )
                     skipped_bad = int((~valid_mask).sum())
                     df = df[valid_mask].copy()
                     if df.empty:
                         return {"success": False, "message": f"No valid metric definitions (skipped {skipped_bad} bad row(s))."}
+                    df['name'] = df['name'].astype(str).str.strip()
 
                     existing = {row[0] for row in session.query(MetricDefinition.name).all()}
                     entries = []
