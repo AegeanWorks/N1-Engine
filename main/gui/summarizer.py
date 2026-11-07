@@ -1,3 +1,4 @@
+import html as html_lib
 import logging
 from datetime import date, datetime, timedelta
 from typing import Dict, Optional
@@ -141,7 +142,7 @@ class SummarizerWidget(QWidget):
         """Formats and displays the summary."""
         today = date.today()
         if intervention_name and intervention_name != "-- Manual Date Range --":
-            text = f"<h1>Summary for Intervention: {intervention_name}</h1>"
+            text = f"<h1>Summary for Intervention: {html_lib.escape(str(intervention_name))}</h1>"
         else:
             text = f"<h1>Summary for {start_date} to {end_date}</h1>"
 
@@ -156,7 +157,10 @@ class SummarizerWidget(QWidget):
                     status = f"Ongoing (Projected end: {i.projected_end_date})"
                 else:
                     status = "Ongoing"
-                text += f"<li><b>{i.name}</b> (Started: {i.start_date}, Status: {status})</li>"
+                text += (
+                    f"<li><b>{html_lib.escape(str(i.name))}</b> "
+                    f"(Started: {i.start_date}, Status: {html_lib.escape(str(status))})</li>"
+                )
             text += "</ul>"
         else:
             text += "<p>No active interventions in this period.</p>"
@@ -166,7 +170,10 @@ class SummarizerWidget(QWidget):
         if metrics:
             text += "<ul>"
             for m in metrics:
-                text += f"<li>{m.date}: <b>{m.metric_name}</b> = {m.value}</li>"
+                text += (
+                    f"<li>{m.date}: <b>{html_lib.escape(str(m.metric_name))}</b> "
+                    f"= {m.value}</li>"
+                )
             text += "</ul>"
         else:
             text += "<p>No metrics logged in this period.</p>"
@@ -176,7 +183,11 @@ class SummarizerWidget(QWidget):
         if events:
             text += "<ul>"
             for e in events:
-                text += f"<li>{e.timestamp.strftime('%Y-%m-%d %H:%M')}: <b>{e.event_name}</b> (Severity: {e.severity})</li>"
+                text += (
+                    f"<li>{e.timestamp.strftime('%Y-%m-%d %H:%M')}: "
+                    f"<b>{html_lib.escape(str(e.event_name))}</b> "
+                    f"(Severity: {e.severity})</li>"
+                )
             text += "</ul>"
         else:
             text += "<p>No events logged in this period.</p>"
