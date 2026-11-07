@@ -30,6 +30,10 @@ class DataManagementWidget(QWidget):
         self.btn_import_events.clicked.connect(lambda: self.import_data('events'))
         self.import_layout.addWidget(self.btn_import_events)
 
+        self.btn_import_definitions = QPushButton("Import Metric Definitions")
+        self.btn_import_definitions.clicked.connect(lambda: self.import_data('metric_definitions'))
+        self.import_layout.addWidget(self.btn_import_definitions)
+
         self.import_group.setLayout(self.import_layout)
         self.layout.addWidget(self.import_group)
 
@@ -48,6 +52,10 @@ class DataManagementWidget(QWidget):
         self.btn_export_events = QPushButton("Export Events")
         self.btn_export_events.clicked.connect(lambda: self.export_data('events'))
         self.export_layout.addWidget(self.btn_export_events)
+
+        self.btn_export_definitions = QPushButton("Export Metric Definitions")
+        self.btn_export_definitions.clicked.connect(lambda: self.export_data('metric_definitions'))
+        self.export_layout.addWidget(self.btn_export_definitions)
 
         self.export_group.setLayout(self.export_layout)
         self.layout.addWidget(self.export_group)

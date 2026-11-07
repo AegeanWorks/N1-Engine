@@ -96,3 +96,10 @@ contract, a dependency, a data format or the architecture; IDs are consecutive a
 - **Context**: The README promises full data portability, but `DataManager` handled only metrics, interventions and events. `MetricDefinition` rows hold the logging vocabulary and the analysis dropdown; exporting and re-importing the other three tables into a fresh workspace lost that vocabulary, so a restored user could not log a new value for an existing metric. Reviewing windows 1->45 through 1->56 confirmed the gap.
 - **Decision**: Add `metric_definitions` to `import_from_csv` and `export_to_csv`. Import requires `name`, strips it, skips blank names, and skips names that already exist in the database or earlier in the same file (the column is unique); `description` and `unit` are cleaned like other optional strings. Export orders by name and id and drops the surrogate id. The message appends `skipped N duplicate row(s)` beside the existing skip and link notes.
 - **Consequences**: A full export/import round-trip now preserves definitions, descriptions and units; duplicate rows no longer abort the file. 36/36 tests pass, including two failing-first round-trip/duplicate tests in `tests/test_audit_regressions.py`.
+
+### ADR-013: Data Management Exposes Metric-Definition Import and Export
+- **Date**: 2026-11-08
+- **Status**: Accepted
+- **Context**: ADR-012 added the `metric_definitions` data type to `DataManager`, but the Data Management tab had no button for it, so a desktop user could not reach the new round-trip without writing code.
+- **Decision**: Add "Import Metric Definitions" and "Export Metric Definitions" buttons to the existing Import and Export groups, wired through the same `import_data`/`export_data` handlers. The change was made under a bounded UI task on surface `app` opened from `fc07bcd`, verified and closed with reviewer `opencode:n1-audit`, and recorded in `.aikit/ui_history.json`.
+- **Consequences**: Every supported CSV table is reachable from the GUI; 36/36 tests pass and the surface stays within its 12-file/300-line budget.
