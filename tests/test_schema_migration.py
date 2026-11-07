@@ -69,6 +69,38 @@ def test_ensure_schema_upgrades_an_old_sqlite_database(tmp_path):
         ).scalar() == "Legacy (unassigned)"
 
 
+def test_ensure_schema_creates_lookup_indexes_on_an_old_database(tmp_path):
+    path = tmp_path / "legacy.db"
+    _old_database(path)
+    engine = create_engine(f"sqlite:///{path.as_posix()}")
+
+    ensure_schema(engine)
+
+    inspector = inspect(engine)
+    required = {
+        "interventions": {"ix_interventions_name", "ix_interventions_start_date"},
+        "metrics": {"ix_metrics_date", "ix_metrics_metric_name"},
+        "events": {"ix_events_timestamp", "ix_events_event_name"},
+    }
+    for table, names in required.items():
+        present = {index["name"] for index in inspector.get_indexes(table)}
+        assert names <= present, f"{table} is missing {names - present}"
+
+
+def test_legacy_placeholder_starts_at_the_earliest_legacy_row(tmp_path):
+    path = tmp_path / "legacy.db"
+    _old_database(path)
+    engine = create_engine(f"sqlite:///{path.as_posix()}")
+
+    ensure_schema(engine)
+
+    with engine.connect() as connection:
+        start = connection.exec_driver_sql(
+            "SELECT start_date FROM interventions WHERE name = 'Legacy (unassigned)'"
+        ).scalar()
+    assert start == "2026-01-02"
+
+
 def test_csv_import_preserves_intervention_links(tmp_path):
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(engine)

@@ -14,7 +14,10 @@ import tempfile
 from pathlib import Path
 
 _TEST_ROOT = Path(tempfile.mkdtemp(prefix="n1-engine-tests-"))
-os.environ.update({"N1_DATABASE_URL": f"sqlite:///{(_TEST_ROOT / 'main.db').as_posix()}"})
+os.environ.update({
+    "N1_DATABASE_URL": f"sqlite:///{(_TEST_ROOT / 'main.db').as_posix()}",
+    "QT_QPA_PLATFORM": "offscreen",
+})
 
 
 def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001 - pytest hook shape

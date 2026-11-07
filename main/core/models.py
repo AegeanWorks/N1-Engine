@@ -7,7 +7,7 @@ class Intervention(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
-    start_date = Column(Date, nullable=False)
+    start_date = Column(Date, nullable=False, index=True)
     projected_end_date = Column(Date, nullable=True)
     end_date = Column(Date, nullable=True)
     dosage = Column(String, nullable=True)

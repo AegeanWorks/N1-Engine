@@ -14,6 +14,19 @@ Base = declarative_base()
 LEGACY_INTERVENTION_NAME = "Legacy (unassigned)"
 
 
+def _earliest_legacy_date(connection) -> str:
+    """Return the earliest date among rows that need the legacy placeholder."""
+    candidates = []
+    for statement in (
+        "SELECT MIN(date) FROM metrics WHERE intervention_id IS NULL",
+        "SELECT MIN(timestamp) FROM events WHERE intervention_id IS NULL",
+    ):
+        value = connection.execute(text(statement)).scalar()
+        if value:
+            candidates.append(str(value)[:10])
+    return min(candidates) if candidates else date.today().isoformat()
+
+
 def _backfill_legacy_rows(connection) -> None:
     """Attach rows logged before interventions were linked to a visible placeholder."""
     has_metrics = connection.execute(
@@ -37,7 +50,7 @@ def _backfill_legacy_rows(connection) -> None:
             ),
             {
                 "name": LEGACY_INTERVENTION_NAME,
-                "start_date": date.today().isoformat(),
+                "start_date": _earliest_legacy_date(connection),
                 "notes": "Created by the schema migration to hold rows logged before "
                          "interventions were linked.",
             },
@@ -79,12 +92,20 @@ def ensure_schema(target_engine=None) -> None:
                     connection.execute(
                         text(f'ALTER TABLE "{table}" ADD COLUMN "{name}" {sql_type}')
                     )
-        connection.execute(text(
-            "CREATE INDEX IF NOT EXISTS ix_metrics_intervention_id ON metrics (intervention_id)"
-        ))
-        connection.execute(text(
-            "CREATE INDEX IF NOT EXISTS ix_events_intervention_id ON events (intervention_id)"
-        ))
+        indexes = {
+            "ix_metrics_intervention_id": "metrics (intervention_id)",
+            "ix_events_intervention_id": "events (intervention_id)",
+            "ix_interventions_name": "interventions (name)",
+            "ix_interventions_start_date": "interventions (start_date)",
+            "ix_metrics_date": "metrics (date)",
+            "ix_metrics_metric_name": "metrics (metric_name)",
+            "ix_events_timestamp": "events (timestamp)",
+            "ix_events_event_name": "events (event_name)",
+        }
+        for name, target in indexes.items():
+            connection.execute(text(
+                f'CREATE INDEX IF NOT EXISTS "{name}" ON {target}'
+            ))
         _backfill_legacy_rows(connection)
 
 

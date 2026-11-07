@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `29`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `46`
+- **Total Top-Level Functions**: `49`
 - **Total Class Methods**: `72`
-- **Total Source Lines**: `3542`
+- **Total Source Lines**: `3609`
 
 ---
 
@@ -69,9 +69,10 @@
 ---
 
 ### [`main/core/database.py`](main/core/database.py)
-**Size**: `96` lines (`3446` bytes)
+**Size**: `117` lines (`4392` bytes)
 
 **Functions:**
+- `def _earliest_legacy_date(connection)` - *Return the earliest date among rows that need the legacy placeholder.*
 - `def _backfill_legacy_rows(connection)` - *Attach rows logged before interventions were linked to a visible placeholder.*
 - `def ensure_schema(target_engine)` - *Create missing tables and add columns introduced after the first release.*
 - `def get_db()`
@@ -79,7 +80,7 @@
 ---
 
 ### [`main/core/models.py`](main/core/models.py)
-**Size**: `63` lines (`2509` bytes)
+**Size**: `63` lines (`2521` bytes)
 
 **Classes:**
 - `class Intervention`
@@ -237,7 +238,7 @@
 ---
 
 ### [`main/gui/summarizer.py`](main/gui/summarizer.py)
-**Size**: `184` lines (`8186` bytes)
+**Size**: `195` lines (`8536` bytes)
 
 **Classes:**
 - `class SummarizerWidget` - *Widget for generating a daily/weekly summary.*
@@ -265,7 +266,7 @@
 ### [`tests/conftest.py`](tests/conftest.py)
 > *Test isolation: never open the owner's live database.*
 
-**Size**: `21` lines (`699` bytes)
+**Size**: `24` lines (`742` bytes)
 
 **Functions:**
 - `def pytest_sessionfinish(session, exitstatus)`
@@ -341,11 +342,13 @@
 ---
 
 ### [`tests/test_schema_migration.py`](tests/test_schema_migration.py)
-**Size**: `195` lines (`7100` bytes)
+**Size**: `227` lines (`8228` bytes)
 
 **Functions:**
 - `def _old_database(path)`
 - `def test_ensure_schema_upgrades_an_old_sqlite_database(tmp_path)`
+- `def test_ensure_schema_creates_lookup_indexes_on_an_old_database(tmp_path)`
+- `def test_legacy_placeholder_starts_at_the_earliest_legacy_row(tmp_path)`
 - `def test_csv_import_preserves_intervention_links(tmp_path)`
 - `def test_save_settings_reports_failure(tmp_path)`
 - `def test_csv_import_coerces_bad_numeric_value_cells(tmp_path)`
