@@ -10,7 +10,7 @@
 - **Total Classes**: `22`
 - **Total Top-Level Functions**: `53`
 - **Total Class Methods**: `72`
-- **Total Source Lines**: `3758`
+- **Total Source Lines**: `3766`
 
 ---
 
@@ -138,7 +138,7 @@
 ---
 
 ### [`main/gui/data_management.py`](main/gui/data_management.py)
-**Size**: `73` lines (`3173` bytes)
+**Size**: `81` lines (`3665` bytes)
 
 **Classes:**
 - `class DataManagementWidget` - *Widget for importing and exporting data.*
