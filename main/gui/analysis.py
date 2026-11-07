@@ -179,7 +179,7 @@ class AnalysisWidget(QWidget):
         text += f"<h3>Metric: {metric_name}</h3>"
 
         if "error" in results:
-            text += f"<p style='color:red'><b>Error:</b> {results['error']}</p>"
+            text += f"<p style='color:red'><b>Error:</b> {html.escape(str(results['error']))}</p>"
             if "baseline_count" in results:
                  text += f"<p>Baseline Count: {results['baseline_count']}</p>"
                  text += f"<p>Intervention Count: {results['intervention_count']}</p>"
@@ -230,7 +230,7 @@ class AnalysisWidget(QWidget):
             text += "<h4>Warnings (Scientific Rigor)</h4>"
             text += "<ul>"
             for w in warnings:
-                text += f"<li style='color:orange'>{w}</li>"
+                text += f"<li style='color:orange'>{html.escape(str(w))}</li>"
             text += "</ul>"
 
         self.results_text.setHtml(text)
