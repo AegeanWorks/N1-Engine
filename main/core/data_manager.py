@@ -48,6 +48,23 @@ def _clean_str_or_none(value):
     return text if text else None
 
 
+def _coerce_link(value, valid_ids):
+    """Return (id, cleared) where an unknown foreign key becomes None."""
+    link = _coerce_int_or_none(value)
+    if link is not None and link not in valid_ids:
+        return None, True
+    return link, False
+
+
+def _import_notes(skipped_bad: int, cleared_links: int) -> str:
+    notes = []
+    if skipped_bad:
+        notes.append(f"skipped {skipped_bad} bad row(s)")
+    if cleared_links:
+        notes.append(f"cleared {cleared_links} unknown intervention link(s)")
+    return f" ({', '.join(notes)})" if notes else ""
+
+
 class DataManager:
     """
     Manages data import and export.
@@ -102,11 +119,16 @@ class DataManager:
                         return {"success": False, "message": f"No valid metric entries (skipped {skipped_bad} bad row(s))."}
                     df['date'] = df['date'].dt.date
 
+                    valid_ids = {row[0] for row in session.query(Intervention.id).all()}
                     entries = []
+                    cleared_links = 0
                     # Convert to list of dicts for faster iteration
                     records = df.to_dict('records')
                     for row in records:
-                        intervention_id = _coerce_int_or_none(row.get('intervention_id'))
+                        intervention_id, cleared = _coerce_link(
+                            row.get('intervention_id'), valid_ids
+                        )
+                        cleared_links += int(cleared)
                         entries.append(MetricEntry(
                             date=row['date'],
                             metric_name=str(row['metric_name']).strip(),
@@ -116,9 +138,10 @@ class DataManager:
                     session.bulk_save_objects(entries)
                     # Single commit: persists for both owned and caller-passed sessions.
                     session.commit()
-                    if skipped_bad:
-                        return {"success": True, "message": f"Successfully imported {len(entries)} metric entries (skipped {skipped_bad} bad row(s))."}
-                    return {"success": True, "message": f"Successfully imported {len(entries)} metric entries."}
+                    return {"success": True, "message": (
+                        f"Successfully imported {len(entries)} metric entries"
+                        f"{_import_notes(skipped_bad, cleared_links)}."
+                    )}
 
                 elif data_type == 'interventions':
                     required_cols = ['name', 'start_date']
@@ -190,12 +213,17 @@ class DataManager:
                     if df.empty:
                         return {"success": False, "message": f"No valid events (skipped {skipped_bad} bad row(s))."}
 
+                    valid_ids = {row[0] for row in session.query(Intervention.id).all()}
                     records = df.to_dict('records')
                     entries = []
+                    cleared_links = 0
                     for row in records:
                         # Out-of-range severity (CHECK 1-5) becomes None instead of failing the file.
                         severity = _coerce_int_or_none(row.get('severity'), min_value=1, max_value=5)
-                        intervention_id = _coerce_int_or_none(row.get('intervention_id'))
+                        intervention_id, cleared = _coerce_link(
+                            row.get('intervention_id'), valid_ids
+                        )
+                        cleared_links += int(cleared)
 
                         entries.append(EventEntry(
                             timestamp=row['timestamp'].to_pydatetime()
@@ -207,9 +235,10 @@ class DataManager:
                         ))
                     session.bulk_save_objects(entries)
                     session.commit()
-                    if skipped_bad:
-                        return {"success": True, "message": f"Successfully imported {len(entries)} events (skipped {skipped_bad} bad row(s))."}
-                    return {"success": True, "message": f"Successfully imported {len(entries)} events."}
+                    return {"success": True, "message": (
+                        f"Successfully imported {len(entries)} events"
+                        f"{_import_notes(skipped_bad, cleared_links)}."
+                    )}
 
                 else:
                     return {"success": False, "message": "Invalid data type."}

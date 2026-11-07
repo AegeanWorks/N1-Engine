@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `29`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `39`
-- **Total Class Methods**: `71`
-- **Total Source Lines**: `3379`
+- **Total Top-Level Functions**: `46`
+- **Total Class Methods**: `72`
+- **Total Source Lines**: `3542`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `270` lines (`12573` bytes)
+**Size**: `299` lines (`13501` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -63,6 +63,8 @@
 - `def _is_missing(value)` - *Return True only when pandas can prove the cell is missing.*
 - `def _coerce_int_or_none(value, min_value, max_value)` - *Coerce CSV cells to int or None without raising.*
 - `def _clean_str_or_none(value)` - *Return stripped string or None for NaN/empty cells.*
+- `def _coerce_link(value, valid_ids)` - *Return (id, cleared) where an unknown foreign key becomes None.*
+- `def _import_notes(skipped_bad, cleared_links)`
 
 ---
 
@@ -101,11 +103,12 @@
 ---
 
 ### [`main/core/settings_manager.py`](main/core/settings_manager.py)
-**Size**: `64` lines (`2311` bytes)
+**Size**: `117` lines (`4423` bytes)
 
 **Classes:**
 - `class SettingsManager`
   - Method `.__init__(settings_file)`
+  - Method `._validated(raw)` - *Keep known keys whose values are positive integers; else default.*
   - Method `.load_settings()`
   - Method `.save_settings()`
   - Method `.get(key, default)`
@@ -272,7 +275,7 @@
 ### [`tests/test_audit_regressions.py`](tests/test_audit_regressions.py)
 > *Failing-first regressions found by the cumulative push-window audit.*
 
-**Size**: `114` lines (`3644` bytes)
+**Size**: `195` lines (`6336` bytes)
 
 **Functions:**
 - `def _session()`
@@ -280,6 +283,11 @@
 - `def test_bootstrap_ci_is_reproducible()`
 - `def test_calculate_trend_handles_missing_values_with_a_datetime_index()`
 - `def test_report_escapes_warning_html(tmp_path)`
+- `def test_settings_reject_wrong_types(tmp_path)`
+- `def test_settings_refuse_an_unsupported_schema_version(tmp_path)`
+- `def test_settings_save_writes_a_schema_version_and_migrates_a_legacy_file(tmp_path)`
+- `def test_metric_import_clears_unknown_intervention_links(tmp_path)`
+- `def test_event_import_clears_unknown_intervention_links(tmp_path)`
 - `def test_export_orders_metrics_deterministically(tmp_path)`
 
 ---

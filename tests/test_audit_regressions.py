@@ -8,6 +8,7 @@ still carries. Run with the project's canonical command:
 from __future__ import annotations
 
 import csv
+import json
 from datetime import date
 from pathlib import Path
 
@@ -16,11 +17,13 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from main.config import MAX_SAFE_METRICS, MIN_DATA_POINTS
 from main.core.analysis import AnalysisEngine
 from main.core.data_manager import DataManager
 from main.core.database import Base
-from main.core.models import MetricEntry
+from main.core.models import EventEntry, Intervention, MetricEntry
 from main.core.reporting import ReportGenerator
+from main.core.settings_manager import SettingsManager
 
 
 def _session():
@@ -88,6 +91,84 @@ def test_report_escapes_warning_html(tmp_path):
 
     assert "<script>" not in content
     assert "&lt;script&gt;" in content
+
+
+def test_settings_reject_wrong_types(tmp_path):
+    path = tmp_path / "settings.json"
+    path.write_text(
+        json.dumps({"min_data_points": "three", "max_safe_metrics": -2}),
+        encoding="utf-8",
+    )
+
+    manager = SettingsManager(str(path))
+
+    assert manager.get("min_data_points") == MIN_DATA_POINTS
+    assert manager.get("max_safe_metrics") == MAX_SAFE_METRICS
+
+
+def test_settings_refuse_an_unsupported_schema_version(tmp_path):
+    path = tmp_path / "settings.json"
+    path.write_text(
+        json.dumps({"version": 99, "min_data_points": 10}), encoding="utf-8"
+    )
+
+    manager = SettingsManager(str(path))
+
+    assert manager.get("min_data_points") == MIN_DATA_POINTS
+
+
+def test_settings_save_writes_a_schema_version_and_migrates_a_legacy_file(tmp_path):
+    path = tmp_path / "settings.json"
+    path.write_text(json.dumps({"min_data_points": 5}), encoding="utf-8")
+    manager = SettingsManager(str(path))
+    assert manager.get("min_data_points") == 5
+
+    assert manager.save_settings() is True
+
+    saved = json.loads(path.read_text(encoding="utf-8"))
+    assert saved["version"] == 1
+
+
+def test_metric_import_clears_unknown_intervention_links(tmp_path):
+    session = _session()
+    try:
+        session.add(Intervention(name="Known", start_date=date(2026, 1, 1)))
+        session.commit()
+        source = tmp_path / "metrics.csv"
+        source.write_text(
+            "date,metric_name,value,intervention_id\n"
+            "2026-01-02,Sleep,8.0,999\n",
+            encoding="utf-8",
+        )
+
+        result = DataManager(session).import_from_csv(str(source), "metrics")
+
+        assert result["success"] is True
+        assert "unknown intervention link" in result["message"]
+        assert session.query(MetricEntry).one().intervention_id is None
+    finally:
+        session.close()
+
+
+def test_event_import_clears_unknown_intervention_links(tmp_path):
+    session = _session()
+    try:
+        session.add(Intervention(name="Known", start_date=date(2026, 1, 1)))
+        session.commit()
+        source = tmp_path / "events.csv"
+        source.write_text(
+            "timestamp,event_name,severity,intervention_id\n"
+            "2026-01-02 10:00:00,Stress,2,999\n",
+            encoding="utf-8",
+        )
+
+        result = DataManager(session).import_from_csv(str(source), "events")
+
+        assert result["success"] is True
+        assert "unknown intervention link" in result["message"]
+        assert session.query(EventEntry).one().intervention_id is None
+    finally:
+        session.close()
 
 
 def test_export_orders_metrics_deterministically(tmp_path):

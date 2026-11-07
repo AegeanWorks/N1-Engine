@@ -5,23 +5,12 @@
     "last_phase": "phase 4",
     "active_phase": 4,
     "status": "in_progress",
-    "updated_at": 1794083941.2371395,
+    "updated_at": 1794084416.5637608,
     "owner": "opencode:n1-audit",
     "started_by": "opencode:n1-audit",
     "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "reforge:run-1",
-      "phase": "reforge stage 17",
-      "phase_num": 3,
-      "description": "Reforge stage 17: window 46, 2 commit(s), 7 file(s) reviewed (unreviewed), 0 finding(s), 0 repaired",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1793293133.2980824,
-      "timestamp_str": "2026-10-29 19:58:53",
-      "agent": "opencode"
-    },
     {
       "task_id": "reforge:run-1",
       "phase": "reforge stage 17",
@@ -248,6 +237,17 @@
       "status": "in_progress",
       "timestamp": 1794083941.2371395,
       "timestamp_str": "2026-11-07 23:39:01",
+      "agent": "opencode:n1-audit"
+    },
+    {
+      "task_id": "audit:push-windows-1-end",
+      "phase": "phase 4",
+      "phase_num": 4,
+      "description": "[2/5] windows 1->15..1->27 verified from a clean worktree; settings schema version, typed validation and atomic save added; CSV imports clear and count unknown intervention links; 31/31 pytest + 4/4 gates",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794084416.5637608,
+      "timestamp_str": "2026-11-07 23:46:56",
       "agent": "opencode:n1-audit"
     }
   ]
