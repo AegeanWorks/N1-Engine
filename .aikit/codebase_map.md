@@ -6,11 +6,11 @@
 ---
 
 ## 📊 Codebase Metrics
-- **Total Python Modules**: `28`
+- **Total Python Modules**: `29`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `37`
+- **Total Top-Level Functions**: `39`
 - **Total Class Methods**: `71`
-- **Total Source Lines**: `3339`
+- **Total Source Lines**: `3379`
 
 ---
 
@@ -119,7 +119,7 @@
 ---
 
 ### [`main/gui/analysis.py`](main/gui/analysis.py)
-**Size**: `268` lines (`10569` bytes)
+**Size**: `268` lines (`10605` bytes)
 
 **Classes:**
 - `class AnalysisWidget` - *Widget for running analysis and displaying results.*
@@ -281,6 +281,17 @@
 - `def test_calculate_trend_handles_missing_values_with_a_datetime_index()`
 - `def test_report_escapes_warning_html(tmp_path)`
 - `def test_export_orders_metrics_deterministically(tmp_path)`
+
+---
+
+### [`tests/test_gui_escaping.py`](tests/test_gui_escaping.py)
+> *UI regression: analysis warnings must render as text, never as markup.*
+
+**Size**: `40` lines (`1224` bytes)
+
+**Functions:**
+- `def qapp()`
+- `def test_display_warnings_are_escaped(qapp)`
 
 ---
 
