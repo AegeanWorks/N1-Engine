@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `30`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `51`
+- **Total Top-Level Functions**: `53`
 - **Total Class Methods**: `72`
-- **Total Source Lines**: `3657`
+- **Total Source Lines**: `3758`
 
 ---
 
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `299` lines (`13501` bytes)
+**Size**: `346` lines (`16014` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -64,7 +64,7 @@
 - `def _coerce_int_or_none(value, min_value, max_value)` - *Coerce CSV cells to int or None without raising.*
 - `def _clean_str_or_none(value)` - *Return stripped string or None for NaN/empty cells.*
 - `def _coerce_link(value, valid_ids)` - *Return (id, cleared) where an unknown foreign key becomes None.*
-- `def _import_notes(skipped_bad, cleared_links)`
+- `def _import_notes(skipped_bad, cleared_links, duplicates)`
 
 ---
 
@@ -276,7 +276,7 @@
 ### [`tests/test_audit_regressions.py`](tests/test_audit_regressions.py)
 > *Failing-first regressions found by the cumulative push-window audit.*
 
-**Size**: `195` lines (`6336` bytes)
+**Size**: `249` lines (`7983` bytes)
 
 **Functions:**
 - `def _session()`
@@ -289,6 +289,8 @@
 - `def test_settings_save_writes_a_schema_version_and_migrates_a_legacy_file(tmp_path)`
 - `def test_metric_import_clears_unknown_intervention_links(tmp_path)`
 - `def test_event_import_clears_unknown_intervention_links(tmp_path)`
+- `def test_metric_definition_csv_roundtrip(tmp_path)`
+- `def test_metric_definition_import_skips_existing_names(tmp_path)`
 - `def test_export_orders_metrics_deterministically(tmp_path)`
 
 ---

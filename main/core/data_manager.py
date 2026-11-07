@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Literal, Optional, Generator
 import logging
 import contextlib
-from main.core.models import MetricEntry, Intervention, EventEntry
+from main.core.models import MetricEntry, Intervention, EventEntry, MetricDefinition
 from main.core.database import SessionLocal
 
 logger = logging.getLogger(__name__)
@@ -56,12 +56,15 @@ def _coerce_link(value, valid_ids):
     return link, False
 
 
-def _import_notes(skipped_bad: int, cleared_links: int) -> str:
+def _import_notes(skipped_bad: int, cleared_links: int = 0,
+                  duplicates: int = 0) -> str:
     notes = []
     if skipped_bad:
         notes.append(f"skipped {skipped_bad} bad row(s)")
     if cleared_links:
         notes.append(f"cleared {cleared_links} unknown intervention link(s)")
+    if duplicates:
+        notes.append(f"skipped {duplicates} duplicate row(s)")
     return f" ({', '.join(notes)})" if notes else ""
 
 
@@ -90,7 +93,7 @@ class DataManager:
             finally:
                 session.close()
 
-    def import_from_csv(self, filepath: str, data_type: Literal['metrics', 'interventions', 'events']) -> dict:
+    def import_from_csv(self, filepath: str, data_type: Literal['metrics', 'interventions', 'events', 'metric_definitions']) -> dict:
         """
         Imports data from a CSV file.
         Returns a dictionary with success/failure status and message.
@@ -240,6 +243,40 @@ class DataManager:
                         f"{_import_notes(skipped_bad, cleared_links)}."
                     )}
 
+                elif data_type == 'metric_definitions':
+                    required_cols = ['name']
+                    if not all(col in df.columns for col in required_cols):
+                        return {"success": False, "message": f"CSV must contain columns: {required_cols}"}
+
+                    df['name'] = df['name'].astype(str).str.strip()
+                    valid_mask = df['name'] != ''
+                    skipped_bad = int((~valid_mask).sum())
+                    df = df[valid_mask].copy()
+                    if df.empty:
+                        return {"success": False, "message": f"No valid metric definitions (skipped {skipped_bad} bad row(s))."}
+
+                    existing = {row[0] for row in session.query(MetricDefinition.name).all()}
+                    entries = []
+                    skipped_duplicates = 0
+                    for row in df.to_dict('records'):
+                        name = row['name']
+                        if name in existing:
+                            skipped_duplicates += 1
+                            continue
+                        existing.add(name)
+                        entries.append(MetricDefinition(
+                            name=name,
+                            description=_clean_str_or_none(row.get('description')),
+                            unit=_clean_str_or_none(row.get('unit'))
+                        ))
+                    if entries:
+                        session.bulk_save_objects(entries)
+                        session.commit()
+                    return {"success": True, "message": (
+                        f"Successfully imported {len(entries)} metric definitions"
+                        f"{_import_notes(skipped_bad, duplicates=skipped_duplicates)}."
+                    )}
+
                 else:
                     return {"success": False, "message": "Invalid data type."}
 
@@ -254,7 +291,7 @@ class DataManager:
             logger.error(f"Import failed: {e}")
             return {"success": False, "message": f"Import failed: {str(e)}"}
 
-    def export_to_csv(self, filepath: str, data_type: Literal['metrics', 'interventions', 'events']) -> dict:
+    def export_to_csv(self, filepath: str, data_type: Literal['metrics', 'interventions', 'events', 'metric_definitions']) -> dict:
         """
         Exports data to a CSV file.
         Returns a dictionary with success/failure status and message.
@@ -290,6 +327,16 @@ class DataManager:
                         df = df.drop(columns=['id'])
                     df.to_csv(filepath, index=False)
                     return {"success": True, "message": f"Successfully exported events to {filepath}."}
+
+                elif data_type == 'metric_definitions':
+                    query = session.query(MetricDefinition).order_by(
+                        MetricDefinition.name, MetricDefinition.id
+                    )
+                    df = pd.read_sql(query.statement, session.bind)
+                    if 'id' in df.columns:
+                        df = df.drop(columns=['id'])
+                    df.to_csv(filepath, index=False)
+                    return {"success": True, "message": f"Successfully exported metric definitions to {filepath}."}
 
                 else:
                     return {"success": False, "message": "Invalid data type."}

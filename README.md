@@ -64,7 +64,7 @@ This tool is built on the principles of "N=1 structured inference":
 -   **Built-in Scientific Safeguards:** Automatically warns you about small sample sizes, the risks of multiple comparisons, and other statistical pitfalls.
 -   **Data Visualization:** Instantly plot time-series charts for any metric within an intervention.
 -   **Customizable Settings:** Tune the analysis parameters to fit your needs.
--   **Full Data Portability:** Import and export all your data to CSV for backup or external analysis.
+-   **Full Data Portability:** Import and export metrics, interventions, events and metric definitions to CSV for backup or external analysis.
 
 ---
 
@@ -182,7 +182,7 @@ These tabs perform actions across your entire dataset.
 Generate a quick summary of all metrics and events logged for a specific intervention or within a manual date range.
 
 ##### Data Management
-Import and export your entire database to CSV files. This is essential for backups or for analyzing your data with other tools (e.g., R, Python notebooks).
+Import and export your data to CSV files: metrics, interventions, events and metric definitions each have their own file. This is essential for backups or for analyzing your data with other tools (e.g., R, Python notebooks).
 
 ##### Settings
 Configure the default parameters used by the Analysis Engine, such as the minimum number of data points required for a warning.

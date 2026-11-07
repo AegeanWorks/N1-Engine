@@ -21,7 +21,12 @@ from main.config import MAX_SAFE_METRICS, MIN_DATA_POINTS
 from main.core.analysis import AnalysisEngine
 from main.core.data_manager import DataManager
 from main.core.database import Base
-from main.core.models import EventEntry, Intervention, MetricEntry
+from main.core.models import (
+    EventEntry,
+    Intervention,
+    MetricDefinition,
+    MetricEntry,
+)
 from main.core.reporting import ReportGenerator
 from main.core.settings_manager import SettingsManager
 
@@ -167,6 +172,55 @@ def test_event_import_clears_unknown_intervention_links(tmp_path):
         assert result["success"] is True
         assert "unknown intervention link" in result["message"]
         assert session.query(EventEntry).one().intervention_id is None
+    finally:
+        session.close()
+
+
+def test_metric_definition_csv_roundtrip(tmp_path):
+    source = _session()
+    target = _session()
+    try:
+        source.add_all([
+            MetricDefinition(name="Energy", description="Daily energy", unit="score"),
+            MetricDefinition(name="Sleep", description="Hours slept", unit="hours"),
+        ])
+        source.commit()
+        exported = tmp_path / "definitions.csv"
+        assert DataManager(source).export_to_csv(
+            str(exported), "metric_definitions"
+        )["success"]
+
+        result = DataManager(target).import_from_csv(
+            str(exported), "metric_definitions"
+        )
+
+        assert result["success"] is True
+        rows = target.query(MetricDefinition).order_by(MetricDefinition.name).all()
+        assert [row.name for row in rows] == ["Energy", "Sleep"]
+        assert rows[1].unit == "hours"
+    finally:
+        source.close()
+        target.close()
+
+
+def test_metric_definition_import_skips_existing_names(tmp_path):
+    session = _session()
+    try:
+        session.add(MetricDefinition(name="Sleep", unit="hours"))
+        session.commit()
+        source = tmp_path / "definitions.csv"
+        source.write_text(
+            "name,description,unit\nSleep,hours slept,hours\nEnergy,daily energy,score\n",
+            encoding="utf-8",
+        )
+
+        result = DataManager(session).import_from_csv(
+            str(source), "metric_definitions"
+        )
+
+        assert result["success"] is True
+        assert "duplicate" in result["message"]
+        assert session.query(MetricDefinition).count() == 2
     finally:
         session.close()
 
