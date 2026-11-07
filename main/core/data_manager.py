@@ -9,6 +9,14 @@ from main.core.database import SessionLocal
 logger = logging.getLogger(__name__)
 
 
+def _is_missing(value) -> bool:
+    """Return True only when pandas can prove the cell is missing."""
+    try:
+        return bool(pd.isna(value))
+    except (TypeError, ValueError):
+        return False
+
+
 def _coerce_int_or_none(value, min_value=None, max_value=None):
     """Coerce CSV cells to int or None without raising.
 
@@ -16,13 +24,8 @@ def _coerce_int_or_none(value, min_value=None, max_value=None):
     bad strings and out-of-range values become None so one bad cell
     does not fail the whole import (severity 1-5 enforced via range).
     """
-    if value is None or (isinstance(value, float) and pd.isna(value)):
+    if value is None or _is_missing(value):
         return None
-    try:
-        if pd.isna(value):
-            return None
-    except (TypeError, ValueError):
-        pass
     try:
         as_float = float(value)
     except (TypeError, ValueError):
@@ -39,13 +42,8 @@ def _coerce_int_or_none(value, min_value=None, max_value=None):
 
 def _clean_str_or_none(value):
     """Return stripped string or None for NaN/empty cells."""
-    if value is None:
+    if value is None or _is_missing(value):
         return None
-    try:
-        if pd.isna(value):
-            return None
-    except (TypeError, ValueError):
-        pass
     text = str(value).strip()
     return text if text else None
 
@@ -235,7 +233,9 @@ class DataManager:
         try:
             with self._get_session() as session:
                 if data_type == 'metrics':
-                    query = session.query(MetricEntry)
+                    query = session.query(MetricEntry).order_by(
+                        MetricEntry.date, MetricEntry.id
+                    )
                     df = pd.read_sql(query.statement, session.bind)
                     if 'id' in df.columns:
                         df = df.drop(columns=['id'])
@@ -243,7 +243,9 @@ class DataManager:
                     return {"success": True, "message": f"Successfully exported metrics to {filepath}."}
 
                 elif data_type == 'interventions':
-                    query = session.query(Intervention)
+                    query = session.query(Intervention).order_by(
+                        Intervention.start_date, Intervention.id
+                    )
                     df = pd.read_sql(query.statement, session.bind)
                     if 'id' in df.columns:
                         df = df.drop(columns=['id'])
@@ -251,7 +253,9 @@ class DataManager:
                     return {"success": True, "message": f"Successfully exported interventions to {filepath}."}
 
                 elif data_type == 'events':
-                    query = session.query(EventEntry)
+                    query = session.query(EventEntry).order_by(
+                        EventEntry.timestamp, EventEntry.id
+                    )
                     df = pd.read_sql(query.statement, session.bind)
                     if 'id' in df.columns:
                         df = df.drop(columns=['id'])

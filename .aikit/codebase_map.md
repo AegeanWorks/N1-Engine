@@ -6,11 +6,11 @@
 ---
 
 ## 📊 Codebase Metrics
-- **Total Python Modules**: `26`
+- **Total Python Modules**: `28`
 - **Total Classes**: `22`
-- **Total Top-Level Functions**: `29`
+- **Total Top-Level Functions**: `37`
 - **Total Class Methods**: `71`
-- **Total Source Lines**: `3193`
+- **Total Source Lines**: `3339`
 
 ---
 
@@ -37,12 +37,12 @@
 ---
 
 ### [`main/core/analysis.py`](main/core/analysis.py)
-**Size**: `308` lines (`12570` bytes)
+**Size**: `315` lines (`12951` bytes)
 
 **Classes:**
 - `class AnalysisEngine` - *Engine for analyzing experiment data.*
   - Method `.calculate_trend(series)` - *Calculates linear trend (slope and p-value) for a time series.*
-  - Method `.bootstrap_ci(group1, group2, n_bootstraps, confidence_level)` - *Calculates confidence interval for the difference in means (group2 - group1) using bootstrap resampling.*
+  - Method `.bootstrap_ci(group1, group2, n_bootstraps, confidence_level, seed)` - *Calculates confidence interval for the difference in means (group2 - group1) using bootstrap resampling.*
   - Method `.correlation_matrix(metrics_df)` - *Calculates correlation matrix for multiple metrics.*
   - Method `.calculate_baseline_vs_intervention(metrics, start_date, baseline_days, intervention_days)` - *Analyzes metric data comparing a baseline period to an intervention period.*
   - Method `.analyze_multiple_metrics(metrics_map, start_date, baseline_days, intervention_days)` - *Analyzes multiple metrics and provides a warning if too many comparisons are made.*
@@ -50,7 +50,7 @@
 ---
 
 ### [`main/core/data_manager.py`](main/core/data_manager.py)
-**Size**: `266` lines (`12578` bytes)
+**Size**: `270` lines (`12573` bytes)
 
 **Classes:**
 - `class DataManager` - *Manages data import and export.*
@@ -60,6 +60,7 @@
   - Method `.export_to_csv(filepath, data_type)` - *Exports data to a CSV file.*
 
 **Functions:**
+- `def _is_missing(value)` - *Return True only when pandas can prove the cell is missing.*
 - `def _coerce_int_or_none(value, min_value, max_value)` - *Coerce CSV cells to int or None without raising.*
 - `def _clean_str_or_none(value)` - *Return stripped string or None for NaN/empty cells.*
 
@@ -91,7 +92,7 @@
 ---
 
 ### [`main/core/reporting.py`](main/core/reporting.py)
-**Size**: `144` lines (`5648` bytes)
+**Size**: `144` lines (`5670` bytes)
 
 **Classes:**
 - `class ReportGenerator` - *Generates HTML reports from analysis results.*
@@ -258,6 +259,31 @@
 
 ---
 
+### [`tests/conftest.py`](tests/conftest.py)
+> *Test isolation: never open the owner's live database.*
+
+**Size**: `21` lines (`699` bytes)
+
+**Functions:**
+- `def pytest_sessionfinish(session, exitstatus)`
+
+---
+
+### [`tests/test_audit_regressions.py`](tests/test_audit_regressions.py)
+> *Failing-first regressions found by the cumulative push-window audit.*
+
+**Size**: `114` lines (`3644` bytes)
+
+**Functions:**
+- `def _session()`
+- `def test_suite_never_uses_the_live_main_database()`
+- `def test_bootstrap_ci_is_reproducible()`
+- `def test_calculate_trend_handles_missing_values_with_a_datetime_index()`
+- `def test_report_escapes_warning_html(tmp_path)`
+- `def test_export_orders_metrics_deterministically(tmp_path)`
+
+---
+
 ### [`tests/test_gui_logic.py`](tests/test_gui_logic.py)
 **Size**: `69` lines (`2276` bytes)
 
@@ -296,7 +322,7 @@
 ---
 
 ### [`tests/test_schema_migration.py`](tests/test_schema_migration.py)
-**Size**: `195` lines (`7295` bytes)
+**Size**: `195` lines (`7100` bytes)
 
 **Functions:**
 - `def _old_database(path)`

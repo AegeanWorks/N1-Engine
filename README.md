@@ -167,7 +167,7 @@ This is the core analytical engine.
     -   `~0.2`: Small effect (potentially unnoticeable)
     -   `~0.5`: Medium effect (noticeable)
     -   `~0.8+`: Large effect (easily noticeable)
--   **Bootstrap 95% CI:** The 95% Confidence Interval for the mean difference. This provides a range of plausible values for the true effect. **If this range does not include zero, the result is statistically significant at the p < 0.05 level.** This is often more intuitive and robust than a p-value alone.
+-   **Bootstrap 95% CI:** The 95% Confidence Interval for the mean difference. This provides a range of plausible values for the true effect. **If this range does not include zero, the result is statistically significant at the p < 0.05 level.** This is often more intuitive and robust than a p-value alone. The resampler uses a fixed seed, so the same data produces the same interval.
 -   **p-values:**
     -   **Welch's t-test:** A standard test to see if the means of two groups are different.
     -   **Mann-Whitney U:** A non-parametric alternative that doesn't assume the data is normally distributed. It's more reliable for small sample sizes or data that isn't bell-shaped (like subjective 1-10 scales).
@@ -238,8 +238,6 @@ python -m pytest tests
 ## Contributing
 
 Contributions are welcome! Please feel free to fork the repository, create a feature branch, and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
-
----
 
 ---
 

@@ -124,7 +124,7 @@ class ReportGenerator:
                     <ul>
                 """
                 for w in results['warnings']:
-                    html += f"<li class='warning'>{w}</li>"
+                    html += f"<li class='warning'>{html_lib.escape(str(w))}</li>"
                 html += """
                     </ul>
                 </div>

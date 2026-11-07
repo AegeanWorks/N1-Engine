@@ -18,16 +18,19 @@ class AnalysisEngine:
         Calculates linear trend (slope and p-value) for a time series.
         Expects series index to be datetime or integer.
         If datetime, it converts to ordinal for regression.
+        Missing values are dropped from both the values and their index so
+        the two regression vectors always keep the same length.
         """
         if len(series) < 3:
             return {"slope": None, "p_value": None}
 
-        y = series.dropna().values
+        clean = series.dropna()
+        y = clean.values
         if len(y) < 3:
              return {"slope": None, "p_value": None}
 
-        if pd.api.types.is_datetime64_any_dtype(series.index):
-             x = series.index.map(pd.Timestamp.toordinal)
+        if pd.api.types.is_datetime64_any_dtype(clean.index):
+             x = clean.index.map(pd.Timestamp.toordinal)
         else:
              x = np.arange(len(y))
 
@@ -38,9 +41,13 @@ class AnalysisEngine:
             logger.warning(f"Trend calculation failed: {e}")
             return {"slope": None, "p_value": None}
 
-    def bootstrap_ci(self, group1: pd.Series, group2: pd.Series, n_bootstraps: int = 1000, confidence_level: float = 0.95) -> Dict[str, float]:
+    def bootstrap_ci(self, group1: pd.Series, group2: pd.Series, n_bootstraps: int = 1000, confidence_level: float = 0.95, seed: int = 42) -> Dict[str, float]:
         """
         Calculates confidence interval for the difference in means (group2 - group1) using bootstrap resampling.
+
+        The generator is seeded so the same inputs produce the same interval;
+        the README promises reproducible analysis. Pass another seed to explore
+        sampling variability deliberately.
         """
         data1 = group1.dropna().values
         data2 = group2.dropna().values
@@ -50,7 +57,7 @@ class AnalysisEngine:
 
         # Simple manual bootstrap for difference in means
         diffs = []
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(seed)
 
         try:
             for _ in range(n_bootstraps):
